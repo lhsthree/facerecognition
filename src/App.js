@@ -30,7 +30,8 @@ class App extends Component{
 		this.state = {
 			input: ' ',
 			imageURL: ' ',
-			box: {}
+			box: {},
+			route: 'signin'
 		}
 	}
 
@@ -69,6 +70,8 @@ Clarifai.FACE_DETECT_MODEL,
     .catch(err => console.log(err));
 }
 
+onRouteChange = () =>
+this.setState({route: 'home'})
 
 render(){
  	 return (
@@ -77,11 +80,15 @@ render(){
                 params={particlesOptions}
                 />
 		    <Navigation />
-		    <SignIn />
-			<Logo />
+		    { this.state.route === 'signin'  
+		    ? <SignIn onRouteChange = {this.onRouteChange}/>
+		    : <div> 
+		    <Logo />
 			<Rank />
 			<ImageLinkForm onInputChange= {this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
 			<FaceRecognition box = {this.state.box} imageURL = {this.state.imageURL} />
+		  </div>
+		  }
 	    </div>
 	  );
 	}
