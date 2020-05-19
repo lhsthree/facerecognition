@@ -7,12 +7,8 @@ import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
 import Particles from 'react-particles-js';
 import Logo from './components/Logo/Logo';
-import Clarifai from 'clarifai';
 import './App.css';
 
-const app = new Clarifai.App({
-	apiKey: 'b01accfee0a4480793d1b1b09e0e4490'
-});
 
 const particlesOptions = {
 	particles: {
@@ -25,23 +21,26 @@ const particlesOptions = {
 		}
 	}
 }
-class App extends Component{
-	constructor(){
-		super();
-		this.state = {
+
+const initialState = {
 			input: ' ',
 			imageURL: ' ',
 			box: {},
 			route: 'signin',
 			isSignedIn: false,
 			user: {
-				id: '' ,
-				name: '',
-				email: '',
+				id: ' ' ,
+				name: ' ',
+				email: ' ',
 				entries: 0,
-				joined: ''
+				joined: ' '
 			}
 		}
+
+class App extends Component{
+	constructor(){
+		super();
+		this.state = initialState;
 	}
 
 loadUser = (data) => {
@@ -67,9 +66,6 @@ calculateFaceLocation = (data) => {
 	}
 }
 
-
-
-
 displayFaceBox = (box) => {
 	this.setState({box: box});
 }
@@ -80,10 +76,14 @@ onInputChange = (event) => {
 
 onButtonSubmit = () => {
 	this.setState ({imageURL: this.state.input});
-	app.models
-	.predict(
-	Clarifai.FACE_DETECT_MODEL,
-     this.state.input)
+	fetch('http://localhost:3030/imageURL',{
+			method: 'post',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({
+				input: this.state.input
+		})
+	})
+.then (response => response.json())
 .then(response => {
 	if (response) {
 		fetch('http://localhost:3030/image',{
@@ -97,6 +97,7 @@ onButtonSubmit = () => {
 		.then(count =>{
 			this.setState(Object.assign(this.state.user, {entries: count}))
 			})
+		.catch (console.log)
 		
 }
 	this.displayFaceBox(this.calculateFaceLocation(response))
@@ -106,15 +107,14 @@ onButtonSubmit = () => {
 
 onRouteChange = (route) =>{
 	if (route === 'signout'){
-		this.setState({isSignedIn: false})
+		this.setState(initialState)
 	}else if (route === 'home'){
 		this.setState({isSignedIn: true})
 	}
 	this.setState({route: route});
 }
 
-
-render(){
+render() {
 	const { isSignedIn, box, imageURL, route } = this.state;
  	 return (
 	    <div className="App">
@@ -140,4 +140,5 @@ render(){
 	  );
 	}
 }
+
 export default App;
