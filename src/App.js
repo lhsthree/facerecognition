@@ -76,7 +76,7 @@ onInputChange = (event) => {
 
 onButtonSubmit = () => {
 	this.setState ({imageURL: this.state.input});
-	fetch('http://localhost:3030/imageURL',{
+	fetch('https://immense-mountain-80049.herokuapp.com/imageURL',{
 			method: 'post',
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
@@ -86,7 +86,7 @@ onButtonSubmit = () => {
 .then (response => response.json())
 .then(response => {
 	if (response) {
-		fetch('http://localhost:3030/image',{
+		fetch('https://immense-mountain-80049.herokuapp.com/image',{
 			method: 'put',
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({
